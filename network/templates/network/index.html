@@ -1,0 +1,32 @@
+{% extends "network/layout.html" %}
+{% load static %}
+{% block body %}
+    {% if user.is_authenticated%} 
+        <h1>All Posts</h1>
+        <div class="post-container">
+            <div class="newpost-container">
+                <h3>New Post</h3>
+                <form action="{% url 'post' user=user.username %}" method="post">
+                    <textarea id="post" rows="7" cols="250" name="content"></textarea>
+                    {% csrf_token %}
+                    <button id="post-btn" type="submit" class="btn btn-primary">Post</button>
+                </form>
+            </div>
+        </div>
+        <section class="post-section">
+            {% for post in allposts %}
+                <div class="post-container">
+                    <a class="user" href="{% url 'profile' user_id=post.user_id %}"> {{ post.user }} </a>
+                    <p class="content">{{ post.content }}</p>
+                    <h5 class="timestamp"> {{ post.timestamp }}</h3>
+                    <p class="like"> {{ post.like }}</p>
+                </div>
+            {% endfor %}
+        </section>
+    {% endif %}
+
+{% endblock %}
+
+{% block script %}
+    <!--<script src="{% static 'network/index.js' %}"></script>-->
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "network/layout.html" %}
+{% load static %}
+{% block body %}
+    <h1>{{ user.username }}</h1>
+    <section class="post-section">
+        {% for post in allposts %}
+            <div class="post-container">
+                <a class="user" href="{% url 'profile' user_id=post.user_id %}"> {{ post.user }} </a>
+                <p class="content">{{ post.content }}</p>
+                <h5 class="timestamp"> {{ post.timestamp }}</h3>
+                <p class="like"> {{ post.like }}</p>
+            </div>
+        {% endfor %}
+    </section>
+{% endblock %}
