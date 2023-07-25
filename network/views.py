@@ -4,6 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.http import JsonResponse
+from django.core.paginator import Paginator
 import json
 
 
@@ -12,8 +13,14 @@ from .models import User, Post,Follow
 
 def index(request):
     all_post = Post.objects.all().order_by('-timestamp')
+    paginator = Paginator(all_post, 5)
+    page_number = request.GET.get('page')
+
+    pages = paginator.get_page(page_number)
+    nums = "a" * pages.paginator.num_pages
     return render(request, "network/index.html", {
-        "allposts": all_post
+        "pages": pages,
+        "nums": nums
     })
 
 def following(request):
