@@ -1,7 +1,28 @@
 {% extends "network/layout.html" %}
 {% load static %}
 {% block body %}
-    <h1>{{ user.username }}</h1>
+    <h1 class="profile_username">{{ user_profile.username }}</h1>
+    <div class="container">
+        <h3 class="followers">Followers: {{ follower_count }}</h3>
+        <h3 class="following">Following: {{ following_count }}</h3>
+    </div>
+    {% if user.is_authenticated%}
+        <div class="btn-container">
+            {% if is_not_user%}
+                {% if already_followed %}
+                    <form action="{% url 'unfollow' user_id=user_profile.pk %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="follow-btn btn btn-primary">Unfollow</button>
+                    </form>
+                {% else %}
+                    <form action="{% url 'follow' user_id=user_profile.pk %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="follow-btn btn btn-primary">Follow</button>
+                    </form>
+                {% endif %}
+            {% endif %}
+        </div>
+    {% endif %}
     <section class="post-section">
         {% for post in allposts %}
             <div class="post-container">
