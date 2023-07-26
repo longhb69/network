@@ -49,3 +49,7 @@ body {
 .post-section {
     margin-bottom: 20px;
 }
+.edit {
+    margin-top: 15px;
+    display: block;
+}

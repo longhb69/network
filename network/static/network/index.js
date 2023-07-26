@@ -1,23 +1,16 @@
-document.addEventListener('DOMContentLoaded', function() {
-    
-    fetch('/allpost')
-    .then(response => response.json())
-    .then(all_post => {
-        console.log(all_post)
-        const post_section = document.querySelector(".post-section");
-        all_post.forEach( post => {
-            const post_container = document.createElement('div');
-            post_container.innerHTML = `
-                <h3 class="user"> ${post.user} </h3>
-                <p class="content"> ${post.content}</p>
-                <h5 class="timestamp">${post.timestamp}</h3>
-                <p class="like"> ${post.like}</p>
+var edits = document.getElementsByClassName("edit");
+const contents = document.querySelectorAll(".content");
 
-                
-            `
-            post_container.classList.add('post-container')
-            post_section.append(post_container);
-        })
-        
-    })
-})
+document.addEventListener('DOMContentLoaded', function() {
+    for(var i = 0; i < edits.length; i++) {
+        edits[i].addEventListener('click', handleEditClick);
+    }
+});
+
+function handleEditClick(event) {
+    event.preventDefault()
+    var clickedEdit = event.target
+    var postContainer = clickedEdit.closest(".post-container")
+    content = postContainer.querySelector('.content')
+    content.innerHTML = `<h1>test</h1>`
+}

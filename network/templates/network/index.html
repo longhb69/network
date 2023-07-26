@@ -17,6 +17,9 @@
             {% for post in pages %}
                 <div class="post-container">
                     <a class="user" href="{% url 'profile' user_id=post.user_id %}"> {{ post.user }} </a>
+                    {% if user == post.user %}
+                        <a class="edit" href="">Edit</a>
+                    {% endif %}
                     <p class="content">{{ post.content }}</p>
                     <h5 class="timestamp"> {{ post.timestamp }}</h3>
                     <p class="like"> {{ post.like }}</p>
@@ -54,5 +57,5 @@
 {% endblock %}
 
 {% block script %}
-    <!--<script src="{% static 'network/index.js' %}"></script>-->
+    <script src="{% static 'network/index.js' %}"></script>
 {% endblock %}
