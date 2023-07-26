@@ -155,6 +155,21 @@ def post(request, user):
        post.save()
        return HttpResponseRedirect(reverse("index"))
     
+
+def editpost(request, id):
+    if request.method == "PUT":
+        print("test")
+        try:
+            post = Post.objects.get(pk=id)
+        except Post.DoesNotExist:
+            return JsonResponse({"error": "Post not found."}, status=404)
+    
+        data = json.loads(request.body)
+        post.content = data["content"]
+        post.save()
+        return HttpResponse(status=204)
+
+    
 def allpost(request):
     all_post = Post.objects.all().order_by('-timestamp')
     print(all_post)

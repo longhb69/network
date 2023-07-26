@@ -16,13 +16,13 @@
         <section class="post-section">
             {% for post in pages %}
                 <div class="post-container">
-                    <a class="user" href="{% url 'profile' user_id=post.user_id %}"> {{ post.user }} </a>
+                    <a class="user" href="{% url 'profile' user_id=post.user_id %}" data-post-id="{{ post.id }}"> {{ post.user }} </a>
                     {% if user == post.user %}
                         <a class="edit" href="">Edit</a>
                     {% endif %}
                     <p class="content">{{ post.content }}</p>
                     <h5 class="timestamp"> {{ post.timestamp }}</h3>
-                    <p class="like"> {{ post.like }}</p>
+                    <i class="fa-solid fa-thumbs-up like-icon"></i> <span class="like">{{ post.like }}</span>
                 </div>
             {% endfor %}
         </section>
@@ -58,4 +58,6 @@
 
 {% block script %}
     <script src="{% static 'network/index.js' %}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://kit.fontawesome.com/ab31b58de2.js" crossorigin="anonymous"></script>
 {% endblock %}
