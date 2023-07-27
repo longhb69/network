@@ -13,7 +13,15 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+function changeIconClass(postContainer, liked) {
+    var icon = postContainer.querySelector('i')
+    icon.classList.remove(liked ? 'unlike-icon': 'like-icon')
+    icon.classList.add(liked ? 'like-icon': 'unlike-icon')
+    icon.style.color = liked ? '#929292': '#ff2600'
+}
+
 function handleUnlikeClick(event) {
+    console.log("UNLIKE")
     clickedLike = event.target
     var postContainer = clickedLike.closest(".post-container")
     var user = postContainer.querySelector(".user")
@@ -23,7 +31,6 @@ function handleUnlikeClick(event) {
     var csrfToken = getCSRFTokenFromCookie('csrftoken');
     liked = like.innerHTML
     liked--
-    console.log(liked)
     fetch(`/unlike/${postId}`, {
         method: "PUT",
         headers: {
@@ -38,12 +45,14 @@ function handleUnlikeClick(event) {
         console.error('Error fetching data:', error)
     })
     like.innerHTML = liked
-    icon.classList.remove('like-icon')
-    icon.classList.add('unlike-icon')
-    icon.style.color = "#929292"
+    flag = true
+    changeIconClass(postContainer, flag)
+    icon.removeEventListener('click', handleUnlikeClick)
+    icon.addEventListener('click', handleLikeClick)
 }
 
 function handleLikeClick(event) {
+    console.log("LIKE")
     clickedLike = event.target
     var postContainer = clickedLike.closest(".post-container")
     var user = postContainer.querySelector(".user")
@@ -67,9 +76,10 @@ function handleLikeClick(event) {
         console.error('Error fetching data:', error)
     })
     like.innerHTML = liked
-    icon.classList.remove('like-icon')
-    icon.classList.add('unlike-icon')
-    icon.style.color = "#ff2600"
+    flag = false
+    changeIconClass(postContainer, flag)
+    icon.removeEventListener('click', handleLikeClick)
+    icon.addEventListener('click', handleUnlikeClick)
 }
 
 function handleEditClick(event) {
@@ -110,7 +120,6 @@ function handleEditClick(event) {
         content.innerHTML = new_content
     })
 }
-
 
 function getCSRFTokenFromCookie(cookieName) {
     var value = "; " + document.cookie;

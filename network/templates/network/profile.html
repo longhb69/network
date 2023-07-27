@@ -24,13 +24,48 @@
         </div>
     {% endif %}
     <section class="post-section">
-        {% for post in allposts %}
+        {% for post in pages %}
             <div class="post-container">
-                <a class="user" href="{% url 'profile' user_id=post.user_id %}"> {{ post.user }} </a>
+                <a class="user" href="{% url 'profile' user_id=post.user_id %}" data-post-id="{{ post.id }}"> {{ post.user }} </a>
                 <p class="content">{{ post.content }}</p>
                 <h5 class="timestamp"> {{ post.timestamp }}</h3>
-                <p class="like"> {{ post.like }}</p>
+                {% if post in liked_post%}
+                    <i class="fa-sharp fa-solid fa-heart unlike-icon" style="color: #ff2600;"></i> <span class="like">{{ post.like }}</span>
+                {% else %}
+                    <i class="fa-sharp fa-solid fa-heart like-icon" style="color: #929292;"></i> <span class="like">{{ post.like }}</span>
+                {% endif%}
             </div>
         {% endfor %}
     </section>
+    
+    <br>
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center pagination-lg">
+            {% if pages.has_previous %}
+                <li class="page-item"><a class="page-link" href="?page=1">&laquo; first</a>
+                <li class="page-item"><a class="page-link" href="?page={{ pages.previous_page_number}}">previous</a>
+            {% endif %}
+            {% for i in nums %}
+                {% if forloop.counter == pages.number%}
+                    <li class="page-item active" aria-current="page">
+                        <span class="page-link">
+                           {{forloop.counter}}
+                        <span class="sr-only">(current)</span>
+                        </span>
+                    </li>
+                {% else %}
+                    <li class="page-item"><a class="page-link" href="?page={{ forloop.counter }}">{{ forloop.counter }}</a>
+                {% endif %}
+            {% endfor %}
+            {% if pages.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{ pages.next_page_number }}">next</a>
+                <li class="page-item"><a class="page-link" href="?page={{ pages.paginator.num_pages}}">last &raquo;</a>
+            {% endif %}
+        </ul>
+    </nav>
+{% endblock %}
+{% block script %}
+    <script src="{% static 'network/index.js' %}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://kit.fontawesome.com/ab31b58de2.js" crossorigin="anonymous"></script>
 {% endblock %}

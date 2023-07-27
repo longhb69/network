@@ -7,13 +7,11 @@ from django.http import JsonResponse
 from django.core.paginator import Paginator
 import json
 
-
 from .models import User, Post,Follow, Like
-
 
 def index(request):
     all_post = Post.objects.all().order_by('-timestamp')
-    paginator = Paginator(all_post, 5)
+    paginator = Paginator(all_post, 10)
     page_number = request.GET.get('page')
 
     pages = paginator.get_page(page_number)
@@ -47,6 +45,12 @@ def profile(request, user_id):
     user_profile = User.objects.get(pk=user_id)
     current_user = User.objects.get(pk=request.user.pk)
     allposts = Post.objects.filter(user_id=user_id).order_by('-timestamp')
+    paginator = Paginator(allposts, 10)
+    page_number = request.GET.get('page')
+
+    pages = paginator.get_page(page_number)
+    nums = "a" * pages.paginator.num_pages
+
     already_followed = False
     try:
         follow = Follow.objects.get(user_id=user_id)
@@ -62,7 +66,8 @@ def profile(request, user_id):
     is_not_user = True if request.user != user_profile else False
     return render(request, "network/profile.html", {
         "user_profile": user_profile,
-        "allposts": allposts,
+        "pages": pages,
+        "nums": nums,
         "following_count": following_count,
         "follower_count": follower_count,
         "is_not_user": is_not_user,
@@ -193,7 +198,7 @@ def unlike(request, id):
             post = Post.objects.get(pk=id)
         except Post.DoesNotExist:
             return JsonResponse({"error": "Post not found"}, status=404)
-        like = Like.objects.get(user=request.user, post=post).delete()
+        Like.objects.get(user=request.user, post=post).delete()
         data = json.loads(request.body)
         post.like = data["like"]
         post.save()
