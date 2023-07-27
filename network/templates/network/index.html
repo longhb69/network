@@ -22,7 +22,11 @@
                     {% endif %}
                     <p class="content">{{ post.content }}</p>
                     <h5 class="timestamp"> {{ post.timestamp }}</h3>
-                    <i class="fa-solid fa-thumbs-up like-icon"></i> <span class="like">{{ post.like }}</span>
+                    {% if post in liked_post%}
+                        <i class="fa-sharp fa-solid fa-heart unlike-icon" style="color: #ff2600;"></i> <span class="like">{{ post.like }}</span>
+                    {% else %}
+                        <i class="fa-sharp fa-solid fa-heart like-icon" style="color: #929292;"></i> <span class="like">{{ post.like }}</span>
+                    {% endif%}
                 </div>
             {% endfor %}
         </section>

@@ -33,6 +33,11 @@ class Follow(models.Model):
     def __str__(self):
         return self.user.username
 
-    
+class Like(models.Model):
+    user = models.ForeignKey("User", on_delete=models.CASCADE, default=None, related_name="user_like")
+    post = models.ForeignKey("Post", on_delete=models.CASCADE, default=None, related_name="like_post")
+
+    def __str__(self):
+        return f"{self.user} liked f{self.post}"
 
     

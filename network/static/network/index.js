@@ -1,19 +1,75 @@
-var edits = document.getElementsByClassName("edit");
-const contents = document.querySelectorAll(".content");
-const likes = document.querySelectorAll(".like-icon")
-
-
 document.addEventListener('DOMContentLoaded', function() {
+    var edits = document.getElementsByClassName("edit");
+    var likes = document.querySelectorAll(".like-icon");
+    var unlikes = document.querySelectorAll(".unlike-icon");
     for(var i = 0; i < edits.length; i++) {
         edits[i].addEventListener('click', handleEditClick);
     }
     for(var i =0; i < likes.length; i++) {
         likes[i].addEventListener('click', handleLikeClick);
     }
+    for(var i=0;i < unlikes.length; i++) {
+        unlikes[i].addEventListener('click', handleUnlikeClick);
+    }
 });
 
+function handleUnlikeClick(event) {
+    clickedLike = event.target
+    var postContainer = clickedLike.closest(".post-container")
+    var user = postContainer.querySelector(".user")
+    var like = postContainer.querySelector(".like")
+    var icon = postContainer.getElementsByTagName("i")[0]
+    var postId = user.dataset.postId
+    var csrfToken = getCSRFTokenFromCookie('csrftoken');
+    liked = like.innerHTML
+    liked--
+    console.log(liked)
+    fetch(`/unlike/${postId}`, {
+        method: "PUT",
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken, // Include the CSRF token in the headers
+        },
+        body: JSON.stringify({
+            like: liked
+        })
+    })
+    .catch(error => {
+        console.error('Error fetching data:', error)
+    })
+    like.innerHTML = liked
+    icon.classList.remove('like-icon')
+    icon.classList.add('unlike-icon')
+    icon.style.color = "#929292"
+}
+
 function handleLikeClick(event) {
-    console.log("like")
+    clickedLike = event.target
+    var postContainer = clickedLike.closest(".post-container")
+    var user = postContainer.querySelector(".user")
+    var like = postContainer.querySelector(".like")
+    var icon = postContainer.getElementsByTagName("i")[0]
+    var postId = user.dataset.postId
+    var csrfToken = getCSRFTokenFromCookie('csrftoken');
+    liked = like.innerHTML
+    liked++
+    fetch(`/like/${postId}`, {
+        method: "PUT",
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken, // Include the CSRF token in the headers
+        },
+        body: JSON.stringify({
+            like: liked
+        })
+    })
+    .catch(error => {
+        console.error('Error fetching data:', error)
+    })
+    like.innerHTML = liked
+    icon.classList.remove('like-icon')
+    icon.classList.add('unlike-icon')
+    icon.style.color = "#ff2600"
 }
 
 function handleEditClick(event) {
@@ -35,7 +91,6 @@ function handleEditClick(event) {
     postContainer.querySelector('#save-btn').addEventListener('click', function() {
         new_content = postContainer.querySelector('#post').value
         var postId = user.dataset.postId
-        console.log(postId)
         var csrfToken = getCSRFTokenFromCookie('csrftoken');
         fetch(`/editpost/${postId}`, {
             method: 'PUT',

@@ -8,7 +8,7 @@ from django.core.paginator import Paginator
 import json
 
 
-from .models import User, Post,Follow
+from .models import User, Post,Follow, Like
 
 
 def index(request):
@@ -18,9 +18,17 @@ def index(request):
 
     pages = paginator.get_page(page_number)
     nums = "a" * pages.paginator.num_pages
+
+    all_likes = Like.objects.all()
+    liked_post = []
+    for like in all_likes:
+        if like.user == request.user:
+            liked_post.append(like.post)
+
     return render(request, "network/index.html", {
         "pages": pages,
-        "nums": nums
+        "nums": nums,
+        "liked_post": liked_post
     })
 
 def following(request):
@@ -158,7 +166,6 @@ def post(request, user):
 
 def editpost(request, id):
     if request.method == "PUT":
-        print("test")
         try:
             post = Post.objects.get(pk=id)
         except Post.DoesNotExist:
@@ -168,8 +175,30 @@ def editpost(request, id):
         post.content = data["content"]
         post.save()
         return HttpResponse(status=204)
-
-    
+def like(request, id):
+    if request.method == "PUT":
+        try:
+            post = Post.objects.get(pk=id)
+        except Post.DoesNotExist:
+            return JsonResponse({"error": "Post not found"}, status=404)
+        like = Like.objects.create(user=request.user, post=post)
+        data = json.loads(request.body)
+        post.like = data["like"]
+        post.save()
+        like.save()
+        return HttpResponse(status=204)
+def unlike(request, id):
+    if request.method == "PUT":
+        try: 
+            post = Post.objects.get(pk=id)
+        except Post.DoesNotExist:
+            return JsonResponse({"error": "Post not found"}, status=404)
+        like = Like.objects.get(user=request.user, post=post).delete()
+        data = json.loads(request.body)
+        post.like = data["like"]
+        post.save()
+        return HttpResponse(status=204)
+        
 def allpost(request):
     all_post = Post.objects.all().order_by('-timestamp')
     print(all_post)
